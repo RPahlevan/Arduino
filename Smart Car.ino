@@ -100,7 +100,7 @@ void loop()
     Serial.println(Distance);
       
     //MOTOR Section
-      if(Distance<30)
+      if(Distance<18)
       {
         analogWrite(PWMPin1, 127); // spin with 50% of the power
         analogWrite(PWMPin2, 127); // spin with 50% of the power
