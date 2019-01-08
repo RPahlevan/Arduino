@@ -39,6 +39,12 @@ float Ping_time=0.0; // a variable to calculate the distance to obstacle
 const float Speed_Of_Sound= 767.269;// speed of sound in miles per hour(mph) at 25 degree(c)
 float Distance=0.0;
 
+//Functions prototype
+float Distance_Sensor(void);
+void Keep_Straight(void);
+void Spin(void);
+
+
 void setup()
 {
   Serial.begin(9600);// UART for Monitor view
@@ -58,6 +64,7 @@ void setup()
 
 void loop()
 {
+
   digitalWrite(VCC_PIN, HIGH); 
   CURRENT_STATUS=digitalRead(SWITCH_PIN);
   
@@ -69,14 +76,65 @@ void loop()
     else
       state = 1;
   }
-  //Serial.print("state: ");
-  //Serial.println(state);
+  Serial.print("state: ");
+  Serial.println(state);
     if(state==1){
+    
     //LED section
     // LED will start to blink after the system start to work
     digitalWrite(LED_PIN, HIGH);
-    delay(200); // Wait for 1000 millisecond(s)
+    delay(20); // Wait for 20 millisecond(s)
+      
+    // ultrasonic sensor section
+     Distance=Distance_Sensor();
     
+    //MOTOR Section
+    if(Distance<20)
+    {
+       Spin();
+       delay(200);
+    }
+    else
+    {
+       Keep_Straight();
+    } 
+    delay(100);
+    
+    //Make the LED off  
+    digitalWrite(LED_PIN, LOW);
+    delay(200); // Wait for 200 millisecond(s)
+  }
+  PREVIOUS_STATUS=CURRENT_STATUS;
+}
+
+// This function will make the Robot to go forward.
+// both motors will work at 100% of the power.
+void Keep_Straight(void)
+{
+        digitalWrite(inputPin1, HIGH);
+        digitalWrite(inputPin2, LOW);
+        digitalWrite(inputPin3, HIGH);
+        digitalWrite(inputPin4, LOW);
+}
+
+//Spin around
+//This function wil make the robot to spin around 
+//Spining will take place in 50% of the power
+
+void Spin(void)
+{
+        analogWrite(PWMPin1, 127); // spin with 50% of the power
+        analogWrite(PWMPin2, 127); // spin with 50% of the power
+        digitalWrite(inputPin1, HIGH);
+        digitalWrite(inputPin2, LOW);
+        digitalWrite(inputPin3, LOW);
+        digitalWrite(inputPin4, HIGH);
+}
+
+// Ultrasonic sensor function
+// At this function distance to obstacle will be measured, and the value will be returned to the main function
+float Distance_Sensor()
+{
     // ultrasonic sensor section
     digitalWrite(Trigger, LOW);
     delayMicroseconds(2000);
@@ -98,29 +156,5 @@ void loop()
     Distance=Distance*63360;// convert miles to inches
     Serial.print("Distance: ");
     Serial.println(Distance);
-      
-    //MOTOR Section
-      if(Distance<18)
-      {
-        analogWrite(PWMPin1, 127); // spin with 50% of the power
-        analogWrite(PWMPin2, 127); // spin with 50% of the power
-        digitalWrite(inputPin1, HIGH);
-        digitalWrite(inputPin2, LOW);
-        digitalWrite(inputPin3, LOW);
-        digitalWrite(inputPin4, HIGH);
-        delay(1200);
-      }
-      else
-      {
-        digitalWrite(inputPin1, HIGH);
-        digitalWrite(inputPin2, LOW);
-        digitalWrite(inputPin3, HIGH);
-        digitalWrite(inputPin4, LOW);
-      } 
-    
-      delay(100);
-      digitalWrite(LED_PIN, LOW);
-      delay(200); // Wait for 1000 millisecond(s)
-  }
-  PREVIOUS_STATUS=CURRENT_STATUS;
+  return Distance;
 }
