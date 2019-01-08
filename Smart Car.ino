@@ -1,4 +1,4 @@
-/*Samrt Car*/
+/*Smart Car*/
 /* R.Pahlevan*/
 /*BOM: Arduino UNO + LED + Push Button+Resistor+ Ultrasonic Sensor*/
 /*two DC motor(less than 7 volts),Motor dirverL2938,battery(9v)*/
